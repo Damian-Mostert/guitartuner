@@ -3,6 +3,9 @@
 :root {
 
 }
-body{
-  background: white;
+html{
+  @apply bg-gradient-to-br from-zinc-100 to-zinc-100 text-black;
+  body{
+    overflow: hidden;
+  }
 }

@@ -4,7 +4,7 @@ import PitchDetector from "@/components/pitchDetector";
 import React from "react";
 import { useTuner } from "@/context/TunerContext";
 import tunings from "@/data/tunings";
-import { PlayCircleIcon } from "lucide-react";
+import { Circle, CircleCheck, PlayCircleIcon } from "lucide-react";
 import Image from "next/image";
 import { PitchProvider } from "@/context/PitchContext";
 
@@ -22,8 +22,8 @@ const GuitarTuner: React.FC = () => {
 
 	return (
     <PitchProvider autoDetect={autoDetect} targetFreq={autoDetect ? -1 : selectedNote?.frequency ?? -1} notes={currentTuning.notes}>
-      <main className="w-screen h-screen flex items-end lg:items-center justify-center bg-gradient-to-br from-zinc-100 to-zinc-100 text-black">
-        <img className="absolute h-screen left-0 object-contain object-top-left lg:object-bottom-left" src={currentTuning.icon}/>
+      <main className="w-screen h-screen overflow-hidden flex items-end lg:items-center justify-center">
+        <img className="absolute h-[90vh] lg:rotate-45 left-0 object-contain object-top-left lg:object-bottom-left" src={currentTuning.icon}/>
         <div className="p-4 m-4 relative z-50 rounded-2xl shadow-2xl border border-zinc-300 w-full max-w-md" style={{
           background:"#FFFFFF50",
           backdropFilter:"blur(4px)"
@@ -48,6 +48,7 @@ const GuitarTuner: React.FC = () => {
 
           <div className="mb-6 flex items-center gap-2 px-1">
             <input
+              hidden
               id="autodetect"
               type="checkbox"
               checked={autoDetect}
@@ -57,8 +58,9 @@ const GuitarTuner: React.FC = () => {
               }}
               className="accent-blue-500 scale-125"
             />
-            <label htmlFor="autodetect" className="font-semibold text-zinc-900 cursor-pointer">
+            <label htmlFor="autodetect" className="font-semibold text-zinc-900 cursor-pointe flex items-center gap-2">
               Auto Detect
+              {autoDetect?<CircleCheck/>:<Circle/>}
             </label>
           </div>
 

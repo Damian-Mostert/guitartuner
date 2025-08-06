@@ -53,7 +53,7 @@ const tunings: Record<string, { name: string;soundType:string;icon:string; notes
   },
   sevenString: {
     name: "7-String Guitar",
-    icon:"/icons/guitar.png",
+    icon:"/icons/7-string.png",
     soundType: "guitar",
     notes: [
       { label: "E4", frequency: 329.63 },
@@ -67,7 +67,7 @@ const tunings: Record<string, { name: string;soundType:string;icon:string; notes
   },
   twelveString: {
     name: "12-String Guitar",
-    icon:"/icons/guitar.png",
+    icon:"/icons/12-string.png",
     soundType: "guitar",
     notes: [
       { label: "E4/E3", frequency: 329.63 }, // paired string average shown
@@ -91,7 +91,7 @@ const tunings: Record<string, { name: string;soundType:string;icon:string; notes
   },
   doubleBass: {
     name: "Double Bass",
-    icon:"/icons/bass.png",
+    icon:"/icons/double-bass.png",
     soundType: "bass",
     notes: [
       { label: "G2", frequency: 98.0 },
@@ -124,7 +124,7 @@ const tunings: Record<string, { name: string;soundType:string;icon:string; notes
   },
   violin: {
     name: "Violin",
-    icon:"/icons/guitar.png",
+    icon:"/icons/violin.png",
     soundType:"violin",
     notes: [
       { label: "E5", frequency: 659.25 },
@@ -135,7 +135,7 @@ const tunings: Record<string, { name: string;soundType:string;icon:string; notes
   },
   viola: {
     name: "Viola",
-    icon:"/icons/guitar.png",
+    icon:"/icons/violin.png",
     soundType:"violin",
     notes: [
       { label: "A4", frequency: 440.0 },
@@ -146,7 +146,7 @@ const tunings: Record<string, { name: string;soundType:string;icon:string; notes
   },
   cello: {
     name: "Cello",
-    icon:"/icons/guitar.png",
+    icon:"/icons/violin.png",
     soundType:"violin",
     notes: [
       { label: "A3", frequency: 220.0 },
