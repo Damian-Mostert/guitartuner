@@ -96,7 +96,7 @@ const PitchDetectorComponent: React.FC<PitchDetectorProps> = ({
   };
 
   return (
-    <div className="mt-6 p-6 bg-stone-100 rounded-md shadow-md">
+    <div className="mt-6 p-6 bg-stone-100 border border-stone-300 rounded-md shadow-md">
       <div className="text-center mb-2 text-lg font-bold">{label}</div>
 
       <div className="flex flex-col items-center justify-center">

@@ -4,7 +4,7 @@ import PitchDetector from "@/components/pitchDetector";
 import React from "react";
 import { useTuner } from "@/context/TunerContext";
 import tunings from "@/data/tunings";
-import { SpeakerIcon } from "lucide-react";
+import { PlayCircleIcon } from "lucide-react";
 
 const GuitarTuner: React.FC = () => {
 	const {
@@ -31,7 +31,7 @@ const GuitarTuner: React.FC = () => {
 							setTuningType(e.target.value);
 							setSelectedNote(null);
 						}}
-						className="p-2 border rounded w-full"
+						className="p-2 border border-stone-200 rounded w-full"
 					>
 						{Object.entries(tunings).map(([key, value]) => (
 							<option key={key} value={key}>
@@ -54,15 +54,15 @@ const GuitarTuner: React.FC = () => {
 				</div>
 
 				{!autoDetect && (
-					<div className="grid grid-cols-2 gap-4">
+					<div className="grid grid-cols-3 gap-1">
 						{currentTuning.notes.map((note, i) => (
 							<button
 								key={i}
 								onClick={() => setSelectedNote(note)}
-								className="w-full p-3 bg-blue-500 hover:bg-blue-600 text-white rounded shadow flex items-center justify-between"
+								className="w-full p-1 bg-blue-500 hover:bg-blue-600 text-white rounded shadow flex items-center justify-between"
 								>
 									{note.label}
-								  <SpeakerIcon onClick={()=>playTone(note.frequency)}/>
+								  <PlayCircleIcon className="hover:text-amber-100" onClick={()=>playTone(note.frequency,currentTuning.soundType)}/>
 							</button>
 						))}
 					</div>

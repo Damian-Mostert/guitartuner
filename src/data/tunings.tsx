@@ -1,6 +1,7 @@
-const tunings: Record<string, { name: string; notes: { label: string; frequency: number }[] }> = {
+const tunings: Record<string, { name: string;soundType:string; notes: { label: string; frequency: number }[] }> = {
   standard: {
     name: "Standard Guitar",
+    soundType: "guitar",
     notes: [
       { label: "E4", frequency: 329.63 },
       { label: "B3", frequency: 246.94 },
@@ -12,6 +13,7 @@ const tunings: Record<string, { name: string; notes: { label: string; frequency:
   },
   dropD: {
     name: "Drop D Guitar",
+    soundType: "guitar",
     notes: [
       { label: "E4", frequency: 329.63 },
       { label: "B3", frequency: 246.94 },
@@ -23,6 +25,7 @@ const tunings: Record<string, { name: string; notes: { label: string; frequency:
   },
   halfStepDown: {
     name: "Half Step Down Guitar",
+    soundType: "guitar",
     notes: [
       { label: "D#4", frequency: 311.13 },
       { label: "A#3", frequency: 233.08 },
@@ -34,6 +37,7 @@ const tunings: Record<string, { name: string; notes: { label: string; frequency:
   },
   dadgad: {
     name: "DADGAD Guitar",
+    soundType: "guitar",
     notes: [
       { label: "D4", frequency: 293.66 },
       { label: "A3", frequency: 220.0 },
@@ -45,6 +49,7 @@ const tunings: Record<string, { name: string; notes: { label: string; frequency:
   },
   sevenString: {
     name: "7-String Guitar",
+    soundType: "guitar",
     notes: [
       { label: "E4", frequency: 329.63 },
       { label: "B3", frequency: 246.94 },
@@ -57,6 +62,7 @@ const tunings: Record<string, { name: string; notes: { label: string; frequency:
   },
   twelveString: {
     name: "12-String Guitar",
+    soundType: "guitar",
     notes: [
       { label: "E4/E3", frequency: 329.63 }, // paired string average shown
       { label: "B3", frequency: 246.94 },
@@ -68,6 +74,7 @@ const tunings: Record<string, { name: string; notes: { label: string; frequency:
   },
   bass: {
     name: "Bass Guitar",
+    soundType: "bass",
     notes: [
       { label: "G2", frequency: 98.0 },
       { label: "D2", frequency: 73.42 },
@@ -77,6 +84,7 @@ const tunings: Record<string, { name: string; notes: { label: string; frequency:
   },
   doubleBass: {
     name: "Double Bass",
+    soundType: "bass",
     notes: [
       { label: "G2", frequency: 98.0 },
       { label: "D2", frequency: 73.42 },
@@ -86,6 +94,7 @@ const tunings: Record<string, { name: string; notes: { label: string; frequency:
   },
   ukulele: {
     name: "Ukulele",
+    soundType:"ukulele",
     notes: [
       { label: "A4", frequency: 440.0 },
       { label: "E4", frequency: 329.63 },
@@ -95,6 +104,7 @@ const tunings: Record<string, { name: string; notes: { label: string; frequency:
   },
   baritoneUkulele: {
     name: "Baritone Ukulele",
+    soundType:"ukulele",
     notes: [
       { label: "E3", frequency: 164.81 },
       { label: "B3", frequency: 246.94 },
@@ -104,6 +114,7 @@ const tunings: Record<string, { name: string; notes: { label: string; frequency:
   },
   violin: {
     name: "Violin",
+    soundType:"violin",
     notes: [
       { label: "E5", frequency: 659.25 },
       { label: "A4", frequency: 440.0 },
@@ -113,6 +124,7 @@ const tunings: Record<string, { name: string; notes: { label: string; frequency:
   },
   viola: {
     name: "Viola",
+    soundType:"violin",
     notes: [
       { label: "A4", frequency: 440.0 },
       { label: "D4", frequency: 293.66 },
@@ -122,6 +134,7 @@ const tunings: Record<string, { name: string; notes: { label: string; frequency:
   },
   cello: {
     name: "Cello",
+    soundType:"violin",
     notes: [
       { label: "A3", frequency: 220.0 },
       { label: "D3", frequency: 146.83 },
@@ -131,6 +144,7 @@ const tunings: Record<string, { name: string; notes: { label: string; frequency:
   },
   mandolin: {
     name: "Mandolin",
+    soundType:"guitar",
     notes: [
       { label: "E4", frequency: 329.63 },
       { label: "A3", frequency: 220.0 },
@@ -140,6 +154,7 @@ const tunings: Record<string, { name: string; notes: { label: string; frequency:
   },
   banjo: {
     name: "Banjo (5-string)",
+    soundType:"guitar",
     notes: [
       { label: "G4", frequency: 392.0 },
       { label: "D3", frequency: 146.83 },
@@ -150,6 +165,7 @@ const tunings: Record<string, { name: string; notes: { label: string; frequency:
   },
   charango: {
     name: "Charango",
+    soundType:"guitar",
     notes: [
       { label: "E4", frequency: 329.63 },
       { label: "A4", frequency: 440.0 },
@@ -160,6 +176,7 @@ const tunings: Record<string, { name: string; notes: { label: string; frequency:
   },
   balalaika: {
     name: "Balalaika",
+    soundType:"guitar",
     notes: [
       { label: "E4", frequency: 329.63 },
       { label: "E4", frequency: 329.63 },
@@ -168,6 +185,7 @@ const tunings: Record<string, { name: string; notes: { label: string; frequency:
   },
   sitar: {
     name: "Sitar",
+    soundType:"guitar",
     notes: [
       { label: "C3", frequency: 130.81 },
       { label: "C4", frequency: 261.63 },
