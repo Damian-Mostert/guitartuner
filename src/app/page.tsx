@@ -1,105 +1,88 @@
 "use client";
 
-import PitchDetector from "@/components/tuner";
-import React, { useState } from "react";
-
-// Available tunings
-const tunings: Record<string, { name: string; notes: { label: string; frequency: number }[] }> = {
-  standard: {
-    name: "Standard Guitar",
-    notes: [
-      { label: "E4", frequency: 329.63 },
-      { label: "B3", frequency: 246.94 },
-      { label: "G3", frequency: 196.0 },
-      { label: "D3", frequency: 146.83 },
-      { label: "A2", frequency: 110.0 },
-      { label: "E2", frequency: 82.41 },
-    ],
-  },
-  bass: {
-    name: "Bass Guitar",
-    notes: [
-      { label: "G2", frequency: 98.0 },
-      { label: "D2", frequency: 73.42 },
-      { label: "A1", frequency: 55.0 },
-      { label: "E1", frequency: 41.2 },
-    ],
-  },
-  ukulele: {
-    name: "Ukulele",
-    notes: [
-      { label: "A4", frequency: 440.0 },
-      { label: "E4", frequency: 329.63 },
-      { label: "C4", frequency: 261.63 },
-      { label: "G4", frequency: 392.0 },
-    ],
-  },
-};
+import PitchDetector from "@/components/pitchDetector";
+import React from "react";
+import { useTuner } from "@/context/TunerContext";
+import tunings from "@/data/tunings";
+import { SpeakerIcon } from "lucide-react";
 
 const GuitarTuner: React.FC = () => {
-  const [tuningType, setTuningType] = useState<keyof typeof tunings>("standard");
-  const [selectedNote, setSelectedNote] = useState<{ label: string; frequency: number } | null>(null);
+	const {
+		tuningType,
+		setTuningType,
+		currentTuning,
+		selectedNote,
+		setSelectedNote,
+		autoDetect,
+		setAutoDetect,
+		playTone,
+	} = useTuner();
 
-  const playTone = (frequency: number) => {
-    const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
-    const oscillator = audioCtx.createOscillator();
-    const gainNode = audioCtx.createGain();
+	return (
+		<main className="w-screen h-screen flex items-center justify-center">
+			<div className="p-4 max-w-md mx-auto bg-white rounded shadow border-stone-200 border">
+				<h2 className="text-2xl font-bold mb-4">🎸 Guitar Tuner</h2>
 
-    oscillator.type = "sine";
-    oscillator.frequency.setValueAtTime(frequency, audioCtx.currentTime);
-    gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+				<div className="mb-4">
+					<label className="block font-semibold mb-2">Select Instrument:</label>
+					<select
+						value={tuningType}
+						onChange={(e) => {
+							setTuningType(e.target.value);
+							setSelectedNote(null);
+						}}
+						className="p-2 border rounded w-full"
+					>
+						{Object.entries(tunings).map(([key, value]) => (
+							<option key={key} value={key}>
+								{value.name}
+							</option>
+						))}
+					</select>
+				</div>
 
-    oscillator.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
+				<div className="mb-4 flex items-center gap-2">
+					<label className="font-semibold">Auto Detect</label>
+					<input
+						type="checkbox"
+						checked={autoDetect}
+						onChange={() => {
+							setAutoDetect(!autoDetect);
+							setSelectedNote(null);
+						}}
+					/>
+				</div>
 
-    oscillator.start();
-    oscillator.stop(audioCtx.currentTime + 2);
-  };
+				{!autoDetect && (
+					<div className="grid grid-cols-2 gap-4">
+						{currentTuning.notes.map((note, i) => (
+							<button
+								key={i}
+								onClick={() => setSelectedNote(note)}
+								className="w-full p-3 bg-blue-500 hover:bg-blue-600 text-white rounded shadow flex items-center justify-between"
+								>
+									{note.label}
+								  <SpeakerIcon onClick={()=>playTone(note.frequency)}/>
+							</button>
+						))}
+					</div>
+				)}
 
-  const currentTuning = tunings[tuningType];
-
-  return (
-    <div className="p-4 max-w-md mx-auto bg-white rounded shadow">
-      <h2 className="text-2xl font-bold mb-4">🎸 Guitar Tuner</h2>
-
-      <div className="mb-4">
-        <label className="block font-semibold mb-2">Select Instrument:</label>
-        <select
-          value={tuningType}
-          onChange={(e) => setTuningType(e.target.value as keyof typeof tunings)}
-          className="p-2 border rounded w-full"
-        >
-          {Object.entries(tunings).map(([key, value]) => (
-            <option key={key} value={key}>
-              {value.name}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
-        {currentTuning.notes.map((note, i) => (
-          <button
-            key={i}
-            onClick={() => {
-              playTone(note.frequency);
-              setSelectedNote(note);
-            }}
-            className="p-3 bg-blue-500 hover:bg-blue-600 text-white rounded shadow"
-          >
-            {note.label}
-          </button>
-        ))}
-      </div>
-
-      {selectedNote && (
-        <PitchDetector
-          targetFreq={selectedNote.frequency}
-          label={`Tuning: ${selectedNote.label}`}
-        />
-      )}
-    </div>
-  );
+				<PitchDetector
+					targetFreq={autoDetect ? -1 : selectedNote?.frequency ?? -1}
+					label={
+						autoDetect
+							? `Auto Detect (${tunings[tuningType].name})`
+							: selectedNote
+							? `Tuning: ${selectedNote.label}`
+							: ""
+					}
+					autoDetect={autoDetect}
+					notes={currentTuning.notes}
+				/>
+			</div>
+		</main>
+	);
 };
 
 export default GuitarTuner;
