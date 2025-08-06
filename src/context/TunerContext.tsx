@@ -25,7 +25,7 @@ const TunerContext = createContext<TunerContextType | undefined>(undefined);
 export const TunerProvider = ({ children }: { children: ReactNode }) => {
   const [tuningType, setTuningType] = useState<keyof typeof tunings>("standard");
   const [selectedNote, setSelectedNote] = useState<Note | null>(null);
-  const [autoDetect, setAutoDetect] = useState(false);
+  const [autoDetect, setAutoDetect] = useState(true);
 
   const currentTuning = tunings[tuningType];
 

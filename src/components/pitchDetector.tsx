@@ -120,6 +120,13 @@ const PitchDetectorComponent: React.FC<PitchDetectorProps> = ({
     return "bg-gray-400";
   };
 
+  const getBgColor = () => {
+    if (direction === "Perfect") return "bg-green-100";
+    if (direction === "Tune Up") return "bg-yellow-100";
+    if (direction === "Tune Down") return "bg-red-100";
+    return "bg-gray-100";
+  };
+
   return (
     <div className="w-full">
       <div className="text-center mb-2 text-lg font-bold">{label}</div>
@@ -132,7 +139,7 @@ const PitchDetectorComponent: React.FC<PitchDetectorProps> = ({
           {currentFreq ? `${currentFreq.toFixed(1)} Hz` : "Listening..."}
         </div>
 
-        <div className="relative w-64 h-4 bg-stone-900 rounded-full mb-3">
+        <div className={`relative w-64 h-4 ${getBgColor()} shadow-inner rounded-full mb-3`}>
           <div
             className={`absolute top-0 left-1/2 w-1 h-4 ${getColor()}`}
             style={{ transform: `translateX(${needlePosition}px)`,transition:"all 0.5s" }}

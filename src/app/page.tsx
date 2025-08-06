@@ -19,17 +19,18 @@ const GuitarTuner: React.FC = () => {
 	} = useTuner();
 
 	return (
-		<main className="w-screen h-screen flex items-center justify-center bg-gradient-to-br from-zinc-800 to-zinc-950 text-white">
-			<div className="p-6 rounded-2xl shadow-2xl bg-zinc-900 border border-zinc-700 w-full max-w-md">
+		<main className="w-screen h-screen flex items-center justify-center bg-gradient-to-br from-zinc-100 to-zinc-100 text-black">
+      <img className="absolute h-screen left-0" src={currentTuning.icon}/>
+			<div className="p-4 mx-4 relative z-50 rounded-2xl shadow-2xl bg-zinc-200 border border-zinc-300 w-full max-w-md">
 				<div className="mb-6">
-					<label className="block font-semibold mb-2 text-zinc-300">Instrument</label>
+					<label className="block font-semibold mb-2 text-zinc-900">Instrument</label>
 					<select
 						value={tuningType}
 						onChange={(e) => {
 							setTuningType(e.target.value);
 							setSelectedNote(null);
 						}}
-						className="p-2 rounded w-full bg-zinc-800 text-white border border-zinc-600 focus:ring-2 focus:ring-blue-500"
+						className="p-2 rounded w-full bg-zinc-200 text-zinc-900 border border-zinc-300 focus:ring-2 focus:ring-blue-500"
 					>
 						{Object.entries(tunings).map(([key, value]) => (
 							<option key={key} value={key}>
@@ -39,7 +40,7 @@ const GuitarTuner: React.FC = () => {
 					</select>
 				</div>
 
-				<div className="mb-6 flex items-center gap-2">
+				<div className="mb-6 flex items-center gap-2 px-1">
 					<input
 						id="autodetect"
 						type="checkbox"
@@ -50,7 +51,7 @@ const GuitarTuner: React.FC = () => {
 						}}
 						className="accent-blue-500 scale-125"
 					/>
-					<label htmlFor="autodetect" className="font-semibold text-zinc-300 cursor-pointer">
+					<label htmlFor="autodetect" className="font-semibold text-zinc-900 cursor-pointer">
 						Auto Detect
 					</label>
 				</div>
@@ -64,7 +65,7 @@ const GuitarTuner: React.FC = () => {
 								className={`p-3 flex items-center justify-between text-sm font-semibold rounded-lg transition-all shadow-inner border ${
 									selectedNote?.label === note.label
 										? "bg-blue-600 text-white border-blue-400"
-										: "bg-zinc-700 hover:bg-zinc-600 text-zinc-100 border-zinc-600"
+										: "bg-zinc-300 hover:bg-zinc-400 hover:text-white text-zinc-600 border-zinc-200"
 								}`}
 							>
 								<span>{note.label}</span>
@@ -80,7 +81,7 @@ const GuitarTuner: React.FC = () => {
 					</div>
 				)}
 
-				<div className="bg-zinc-800 rounded-xl border border-zinc-700 p-4">
+				<div className="rounded-xl border border-zinc-300 p-4">
 					<PitchDetector
 						targetFreq={autoDetect ? -1 : selectedNote?.frequency ?? -1}
 						label={
@@ -95,6 +96,7 @@ const GuitarTuner: React.FC = () => {
 					/>
 				</div>
 			</div>
+      <img className="absolute bottom-4 right-4 w-auto h-20" src="/logo.png"/>
 		</main>
 	);
 };
