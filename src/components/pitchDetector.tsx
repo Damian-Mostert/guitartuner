@@ -28,6 +28,17 @@ const PitchDetectorComponent: React.FC<PitchDetectorProps> = ({
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const detectorRef = useRef<ReturnType<typeof PitchDetector.forFloat32Array> | null>(null);
+  const recentFreqs = useRef<number[]>([]);
+
+  const smoothFrequency = (newFreq: number) => {
+    const maxSamples = 5;
+    recentFreqs.current.push(newFreq);
+    if (recentFreqs.current.length > maxSamples) {
+      recentFreqs.current.shift();
+    }
+    const sum = recentFreqs.current.reduce((a, b) => a + b, 0);
+    return sum / recentFreqs.current.length;
+  };
 
   useEffect(() => {
     const initMic = async () => {
@@ -46,22 +57,25 @@ const PitchDetectorComponent: React.FC<PitchDetectorProps> = ({
       detectorRef.current = PitchDetector.forFloat32Array(analyser.fftSize);
 
       const update = () => {
-        analyser.getFloatTimeDomainData(buffer);
-        const [pitch, clarity] = detectorRef.current!.findPitch(buffer, audioCtx.sampleRate);
+        if (!analyserRef.current || !detectorRef.current || !audioContextRef.current) return;
+
+        analyserRef.current.getFloatTimeDomainData(buffer);
+        const [pitch, clarity] = detectorRef.current.findPitch(buffer, audioContextRef.current.sampleRate);
 
         if (clarity > 0.9 && pitch > 0) {
-          setCurrentFreq(pitch);
+          const smoothed = smoothFrequency(pitch);
+          setCurrentFreq(smoothed);
 
           let refFreq = targetFreq;
           if (autoDetect && notes.length) {
             const closest = notes.reduce((prev, curr) =>
-              Math.abs(curr.frequency - pitch) < Math.abs(prev.frequency - pitch) ? curr : prev
+              Math.abs(curr.frequency - smoothed) < Math.abs(prev.frequency - smoothed) ? curr : prev
             );
             setDetectedNote(closest);
             refFreq = closest.frequency;
           }
 
-          const difference = pitch - refFreq;
+          const difference = smoothed - refFreq;
           setDiff(difference);
 
           if (Math.abs(difference) < 1.5) {
@@ -72,11 +86,11 @@ const PitchDetectorComponent: React.FC<PitchDetectorProps> = ({
             setDirection("Tune Up");
           }
         }
-
-        requestAnimationFrame(update);
       };
 
-      update();
+      const intervalId = setInterval(update, 75); // more stable than requestAnimationFrame
+
+      return () => clearInterval(intervalId);
     };
 
     initMic();
@@ -85,6 +99,17 @@ const PitchDetectorComponent: React.FC<PitchDetectorProps> = ({
       audioContextRef.current?.close();
     };
   }, [targetFreq, autoDetect, notes]);
+
+  // Resume AudioContext on user interaction
+  useEffect(() => {
+    const resumeAudio = () => {
+      if (audioContextRef.current?.state === "suspended") {
+        audioContextRef.current.resume();
+      }
+    };
+    window.addEventListener("click", resumeAudio);
+    return () => window.removeEventListener("click", resumeAudio);
+  }, []);
 
   const needlePosition = Math.max(-50, Math.min(50, diff * 10)); // clamp between -50 and 50
 
@@ -96,7 +121,7 @@ const PitchDetectorComponent: React.FC<PitchDetectorProps> = ({
   };
 
   return (
-    <div className="mt-6 p-6 bg-stone-100 border border-stone-300 rounded-md shadow-md">
+    <div className="w-full">
       <div className="text-center mb-2 text-lg font-bold">{label}</div>
 
       <div className="flex flex-col items-center justify-center">
@@ -107,10 +132,10 @@ const PitchDetectorComponent: React.FC<PitchDetectorProps> = ({
           {currentFreq ? `${currentFreq.toFixed(1)} Hz` : "Listening..."}
         </div>
 
-        <div className="relative w-64 h-4 bg-gray-300 rounded-full mb-3">
+        <div className="relative w-64 h-4 bg-stone-900 rounded-full mb-3">
           <div
-            className={`absolute top-0 left-1/2 w-1 h-4 ${getColor()} transition-transform duration-100`}
-            style={{ transform: `translateX(${needlePosition}px)` }}
+            className={`absolute top-0 left-1/2 w-1 h-4 ${getColor()}`}
+            style={{ transform: `translateX(${needlePosition}px)`,transition:"all 0.5s" }}
           />
           <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 text-sm text-gray-600">0</div>
           <div className="absolute -top-5 left-0 text-sm text-gray-600">-50</div>
@@ -118,15 +143,9 @@ const PitchDetectorComponent: React.FC<PitchDetectorProps> = ({
         </div>
 
         <div className={`text-lg font-semibold ${direction === "Perfect" ? "text-green-600" : "text-red-600"}`}>
-          {direction == "Tune Down"&&<>
-            <ArrowLeftIcon/>
-          </>}
-          {direction == "Tune Up"&&<>
-            <ArrowRightIcon/>
-          </>}
-          {direction == "Perfect"&&<>
-            <CheckIcon/>            
-          </>}
+          {direction === "Tune Down" && <ArrowLeftIcon />}
+          {direction === "Tune Up" && <ArrowRightIcon />}
+          {direction === "Perfect" && <CheckIcon />}
         </div>
       </div>
     </div>
