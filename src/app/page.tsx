@@ -23,7 +23,7 @@ const GuitarTuner: React.FC = () => {
 	return (
     <PitchProvider autoDetect={autoDetect} targetFreq={autoDetect ? -1 : selectedNote?.frequency ?? -1} notes={currentTuning.notes}>
       <main className="w-screen h-screen overflow-hidden flex items-end lg:items-center justify-center">
-        <img className="absolute h-[90vh] lg:rotate-45 left-0 object-contain object-top-left lg:object-bottom-left" src={currentTuning.icon}/>
+        <img alt={currentTuning.name} className="absolute h-[90vh] lg:rotate-45 left-0 object-contain object-top-left lg:object-bottom-left" src={currentTuning.icon}/>
         <div className="p-4 m-4 relative z-50 rounded-2xl shadow-2xl border border-zinc-300 w-full max-w-md" style={{
           background:"#FFFFFF50",
           backdropFilter:"blur(4px)"
