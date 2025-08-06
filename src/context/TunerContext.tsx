@@ -1,84 +1,108 @@
 "use client";
 
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  ReactNode,
+import {
+	createContext,
+	useContext,
+	useState,
+	useEffect,
+	ReactNode,
+  useRef,
 } from "react";
+
 import tunings from "@/data/tunings";
 
 type Note = {
-  label: string;
-  frequency: number;
+	label: string;
+	frequency: number;
 };
 
 type TunerContextType = {
-  tuningType: keyof typeof tunings;
-  setTuningType: (type: keyof typeof tunings) => void;
-  currentTuning: typeof tunings[keyof typeof tunings];
-  selectedNote: Note | null;
-  setSelectedNote: (note: Note | null) => void;
-  autoDetect: boolean;
-  setAutoDetect: (value: boolean) => void;
-  playTone: (frequency: number, instrumentType: string) => void;
+	tuningType: keyof typeof tunings;
+	setTuningType: (type: keyof typeof tunings) => void;
+	currentTuning: typeof tunings[keyof typeof tunings];
+	selectedNote: Note | null;
+	setSelectedNote: (note: Note | null) => void;
+	autoDetect: boolean;
+	setAutoDetect: (value: boolean) => void;
+	playTone: (frequency: number, instrumentType: string) => void;
 };
 
 const TunerContext = createContext<TunerContextType | undefined>(undefined);
 
 export const TunerProvider = ({ children }: { children: ReactNode }) => {
-  const [tuningType, setTuningTypeState] = useState<keyof typeof tunings>("standard");
-  const [selectedNote, setSelectedNoteState] = useState<Note | null>(null);
-  const [autoDetect, setAutoDetectState] = useState(true);
+	const [tuningType, setTuningTypeState] = useState<keyof typeof tunings>("standard");
+	const [selectedNote, setSelectedNoteState] = useState<Note | null>(null);
+	const [autoDetect, setAutoDetectState] = useState(true);
 
-  const setTuningType = (type: keyof typeof tunings) => {
-    setTuningTypeState(type);
-    localStorage.setItem("tuningType", type);
-  };
+	const setTuningType = (type: keyof typeof tunings) => {
+		setTuningTypeState(type);
+		localStorage.setItem("tuningType", type);
+	};
 
-  const setAutoDetect = (value: boolean) => {
-    setAutoDetectState(value);
-    localStorage.setItem("autoDetect", JSON.stringify(value));
-  };
+	const setAutoDetect = (value: boolean) => {
+		setAutoDetectState(value);
+		localStorage.setItem("autoDetect", JSON.stringify(value));
+	};
 
-  const setSelectedNote = (note: Note | null) => {
-    setSelectedNoteState(note);
-    if (note) {
-      localStorage.setItem("selectedNote", JSON.stringify(note));
-    } else {
-      localStorage.removeItem("selectedNote");
-    }
-  };
+	const setSelectedNote = (note: Note | null) => {
+		setSelectedNoteState(note);
+		if (note) {
+			localStorage.setItem("selectedNote", JSON.stringify(note));
+		} else {
+			localStorage.removeItem("selectedNote");
+		}
+	};
+
+	// Hydrate state from localStorage on first load
+	useEffect(() => {
+		const storedTuning = localStorage.getItem("tuningType");
+		const storedAutoDetect = localStorage.getItem("autoDetect");
+		const storedNote = localStorage.getItem("selectedNote");
+
+		if (storedTuning && storedTuning in tunings) {
+			setTuningTypeState(storedTuning as keyof typeof tunings);
+		}
+
+		if (storedAutoDetect !== null) {
+			setAutoDetectState(JSON.parse(storedAutoDetect));
+		}
+
+		if (storedNote) {
+			try {
+				const parsedNote = JSON.parse(storedNote);
+				if (parsedNote.label && typeof parsedNote.frequency === "number") {
+					setSelectedNoteState(parsedNote);
+				}
+			} catch {
+				// Ignore invalid data
+			}
+		}
+	}, []);
+
+	// Automatically update selectedNote when tuning changes and autoDetect is off
+	useEffect(() => {
+		if (!autoDetect) {
+			const firstNote = tunings[tuningType].notes[0];
+			setSelectedNote(firstNote);
+		} else {
+			setSelectedNote(null); // If autoDetect is on, no note should be selected
+		}
+	}, [tuningType, autoDetect]);
+
+	const currentTuning = tunings[tuningType];
+  const audioCtxRef = useRef<AudioContext | null>(null);
 
   useEffect(() => {
-    const storedTuning = localStorage.getItem("tuningType");
-    if (storedTuning && storedTuning in tunings) {
-      setTuningTypeState(storedTuning as keyof typeof tunings);
-    }
-
-    const storedAutoDetect = localStorage.getItem("autoDetect");
-    if (storedAutoDetect !== null) {
-      setAutoDetectState(JSON.parse(storedAutoDetect));
-    }
-
-    const storedNote = localStorage.getItem("selectedNote");
-    if (storedNote) {
-      try {
-        const parsedNote = JSON.parse(storedNote);
-        if (parsedNote.label && typeof parsedNote.frequency === "number") {
-          setSelectedNoteState(parsedNote);
-        }
-      } catch {
-        // Invalid data — ignore
-      }
-    }
+    audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+    return () => {
+      audioCtxRef.current?.close();
+    };
   }, []);
 
-  const currentTuning = tunings[tuningType];
-
   const playTone = (frequency: number, instrumentType: string) => {
-    const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const ctx = audioCtxRef.current;
+    if (!ctx || ctx.state === "closed") return;
+
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
 
@@ -98,8 +122,8 @@ export const TunerProvider = ({ children }: { children: ReactNode }) => {
 
     const duration = 2;
     const fadeOutTime = 1.5;
-
     const now = ctx.currentTime;
+
     osc.frequency.setValueAtTime(frequency, now);
     gain.gain.setValueAtTime(0.2, now);
     gain.gain.linearRampToValueAtTime(0.0, now + fadeOutTime);
@@ -111,28 +135,28 @@ export const TunerProvider = ({ children }: { children: ReactNode }) => {
     osc.stop(now + duration);
   };
 
-  return (
-    <TunerContext.Provider
-      value={{
-        tuningType,
-        setTuningType,
-        currentTuning,
-        selectedNote,
-        setSelectedNote,
-        autoDetect,
-        setAutoDetect,
-        playTone,
-      }}
-    >
-      {children}
-    </TunerContext.Provider>
-  );
+	return (
+		<TunerContext.Provider
+			value={{
+				tuningType,
+				setTuningType,
+				currentTuning,
+				selectedNote,
+				setSelectedNote,
+				autoDetect,
+				setAutoDetect,
+				playTone,
+			}}
+		>
+			{children}
+		</TunerContext.Provider>
+	);
 };
 
 export const useTuner = (): TunerContextType => {
-  const context = useContext(TunerContext);
-  if (!context) {
-    throw new Error("useTuner must be used within a TunerProvider");
-  }
-  return context;
+	const context = useContext(TunerContext);
+	if (!context) {
+		throw new Error("useTuner must be used within a TunerProvider");
+	}
+	return context;
 };

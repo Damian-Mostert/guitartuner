@@ -8,7 +8,6 @@ import React, {
 } from "react";
 import { PitchDetector } from "pitchy";
 
-// Replace with your actual Note type
 interface Note {
   label: string;
   frequency: number;
@@ -56,76 +55,84 @@ export const PitchProvider: React.FC<PitchProviderProps> = ({
     return sum / recentFreqs.current.length;
   };
 
-  useEffect(() => {
-    const initMic = async () => {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
-      audioContextRef.current = audioCtx;
+    useEffect(() => {
+        let intervalId: NodeJS.Timeout;
 
-      const analyser = audioCtx.createAnalyser();
-      analyser.fftSize = 2048;
-      analyserRef.current = analyser;
+        const initMic = async () => {
+            if (audioContextRef.current?.state === "closed") return;
 
-      const source = audioCtx.createMediaStreamSource(stream);
-      source.connect(analyser);
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
-      const buffer = new Float32Array(analyser.fftSize);
-      detectorRef.current = PitchDetector.forFloat32Array(analyser.fftSize);
+            const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+            audioContextRef.current = audioCtx;
 
-      const update = () => {
-        if (!analyserRef.current || !detectorRef.current || !audioContextRef.current) return;
+            const analyser = audioCtx.createAnalyser();
+            analyser.fftSize = 2048;
+            analyserRef.current = analyser;
 
-        analyserRef.current.getFloatTimeDomainData(buffer);
-        const [pitch, clarity] = detectorRef.current.findPitch(buffer, audioContextRef.current.sampleRate);
+            const source = audioCtx.createMediaStreamSource(stream);
+            source.connect(analyser);
 
-        if (clarity > 0.9 && pitch > 0) {
-          const smoothed = smoothFrequency(pitch);
-          setCurrentFreq(smoothed);
+            const buffer = new Float32Array(analyser.fftSize);
+            detectorRef.current = PitchDetector.forFloat32Array(analyser.fftSize);
 
-          let refFreq = targetFreq;
-          if (autoDetect && notes.length) {
-            const closest = notes.reduce((prev, curr) =>
-              Math.abs(curr.frequency - smoothed) < Math.abs(prev.frequency - smoothed) ? curr : prev
-            );
-            setDetectedNote(closest);
-            refFreq = closest.frequency;
-          }
+            const update = () => {
+            if (!analyserRef.current || !detectorRef.current || !audioContextRef.current) return;
 
-          const difference = smoothed - refFreq;
-          setDiff(difference);
+            analyserRef.current.getFloatTimeDomainData(buffer);
+            const [pitch, clarity] = detectorRef.current.findPitch(buffer, audioContextRef.current.sampleRate);
 
-          if (Math.abs(difference) < 1.5) {
-            setDirection("Perfect");
-          } else if (difference > 0) {
-            setDirection("Tune Down");
-          } else {
-            setDirection("Tune Up");
-          }
-        }
-      };
+            if (clarity > 0.9 && pitch > 0) {
+                const smoothed = smoothFrequency(pitch);
+                setCurrentFreq(smoothed);
 
-      const intervalId = setInterval(update, 75);
+                let refFreq = targetFreq;
+                if (autoDetect && notes.length) {
+                const closest = notes.reduce((prev, curr) =>
+                    Math.abs(curr.frequency - smoothed) < Math.abs(prev.frequency - smoothed) ? curr : prev
+                );
+                setDetectedNote(closest);
+                refFreq = closest.frequency;
+                }
 
-      return () => clearInterval(intervalId);
-    };
+                const difference = smoothed - refFreq;
+                setDiff(difference);
 
-    initMic();
+                if (Math.abs(difference) < 1.5) {
+                setDirection("Perfect");
+                } else if (difference > 0) {
+                setDirection("Tune Down");
+                } else {
+                setDirection("Tune Up");
+                }
+            }
+            };
 
-    return () => {
-      audioContextRef.current?.close();
-    };
-  }, [targetFreq, autoDetect, notes]);
+            intervalId = setInterval(update, 75);
+        };
 
-  // Resume AudioContext on user interaction
-  useEffect(() => {
+        initMic();
+
+        // Only clean up on unmount
+        return () => {
+            clearInterval(intervalId);
+            if (audioContextRef.current?.state !== "closed") {
+            audioContextRef.current?.close();
+            }
+        };
+    }, []);
+
+
+    useEffect(() => {
     const resumeAudio = () => {
-      if (audioContextRef.current?.state === "suspended") {
+        if (audioContextRef.current?.state === "suspended") {
         audioContextRef.current.resume();
-      }
+        }
     };
     window.addEventListener("click", resumeAudio);
     return () => window.removeEventListener("click", resumeAudio);
-  }, []);
+    }, []);
+
 
   return (
     <PitchContext.Provider value={{ currentFreq, direction, detectedNote, diff }}>
