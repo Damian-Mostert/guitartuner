@@ -1,115 +1,16 @@
-import React, { useEffect, useRef, useState } from "react";
-import { PitchDetector } from "pitchy";
-import { ArrowLeftIcon, ArrowRightIcon, CheckIcon } from "lucide-react";
-
-interface Note {
-  label: string;
-  frequency: number;
-}
+import React from "react";
+import { usePitch } from "@/context/PitchContext";
 
 interface PitchDetectorProps {
-  targetFreq: number;
   label: string;
   autoDetect?: boolean;
-  notes?: Note[];
 }
 
 const PitchDetectorComponent: React.FC<PitchDetectorProps> = ({
-  targetFreq,
   label,
   autoDetect = false,
-  notes = [],
 }) => {
-  const [currentFreq, setCurrentFreq] = useState<number | null>(null);
-  const [direction, setDirection] = useState<string>("");
-  const [detectedNote, setDetectedNote] = useState<Note | null>(null);
-  const [diff, setDiff] = useState<number>(0);
-
-  const audioContextRef = useRef<AudioContext | null>(null);
-  const analyserRef = useRef<AnalyserNode | null>(null);
-  const detectorRef = useRef<ReturnType<typeof PitchDetector.forFloat32Array> | null>(null);
-  const recentFreqs = useRef<number[]>([]);
-
-  const smoothFrequency = (newFreq: number) => {
-    const maxSamples = 5;
-    recentFreqs.current.push(newFreq);
-    if (recentFreqs.current.length > maxSamples) {
-      recentFreqs.current.shift();
-    }
-    const sum = recentFreqs.current.reduce((a, b) => a + b, 0);
-    return sum / recentFreqs.current.length;
-  };
-
-  useEffect(() => {
-    const initMic = async () => {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
-      audioContextRef.current = audioCtx;
-
-      const analyser = audioCtx.createAnalyser();
-      analyser.fftSize = 2048;
-      analyserRef.current = analyser;
-
-      const source = audioCtx.createMediaStreamSource(stream);
-      source.connect(analyser);
-
-      const buffer = new Float32Array(analyser.fftSize);
-      detectorRef.current = PitchDetector.forFloat32Array(analyser.fftSize);
-
-      const update = () => {
-        if (!analyserRef.current || !detectorRef.current || !audioContextRef.current) return;
-
-        analyserRef.current.getFloatTimeDomainData(buffer);
-        const [pitch, clarity] = detectorRef.current.findPitch(buffer, audioContextRef.current.sampleRate);
-
-        if (clarity > 0.9 && pitch > 0) {
-          const smoothed = smoothFrequency(pitch);
-          setCurrentFreq(smoothed);
-
-          let refFreq = targetFreq;
-          if (autoDetect && notes.length) {
-            const closest = notes.reduce((prev, curr) =>
-              Math.abs(curr.frequency - smoothed) < Math.abs(prev.frequency - smoothed) ? curr : prev
-            );
-            setDetectedNote(closest);
-            refFreq = closest.frequency;
-          }
-
-          const difference = smoothed - refFreq;
-          setDiff(difference);
-
-          if (Math.abs(difference) < 1.5) {
-            setDirection("Perfect");
-          } else if (difference > 0) {
-            setDirection("Tune Down");
-          } else {
-            setDirection("Tune Up");
-          }
-        }
-      };
-
-      const intervalId = setInterval(update, 75); // more stable than requestAnimationFrame
-
-      return () => clearInterval(intervalId);
-    };
-
-    initMic();
-
-    return () => {
-      audioContextRef.current?.close();
-    };
-  }, [targetFreq, autoDetect, notes]);
-
-  // Resume AudioContext on user interaction
-  useEffect(() => {
-    const resumeAudio = () => {
-      if (audioContextRef.current?.state === "suspended") {
-        audioContextRef.current.resume();
-      }
-    };
-    window.addEventListener("click", resumeAudio);
-    return () => window.removeEventListener("click", resumeAudio);
-  }, []);
+   const { currentFreq, direction, detectedNote, diff } = usePitch();
 
   const needlePosition = Math.max(-50, Math.min(50, diff * 10)); // clamp between -50 and 50
 
@@ -150,9 +51,7 @@ const PitchDetectorComponent: React.FC<PitchDetectorProps> = ({
         </div>
 
         <div className={`text-lg font-semibold ${direction === "Perfect" ? "text-green-600" : "text-red-600"}`}>
-          {direction === "Tune Down" && <ArrowLeftIcon />}
-          {direction === "Tune Up" && <ArrowRightIcon />}
-          {direction === "Perfect" && <CheckIcon />}
+          {direction}
         </div>
       </div>
     </div>
