@@ -23,20 +23,21 @@ const GuitarTuner: React.FC = () => {
 	return (
     <PitchProvider autoDetect={autoDetect} targetFreq={autoDetect ? -1 : selectedNote?.frequency ?? -1} notes={currentTuning.notes}>
       <main className="w-screen h-screen overflow-hidden flex items-end lg:items-center justify-center">
-        <img alt={currentTuning.name} className="absolute h-[90vh] lg:rotate-45 left-0 object-contain object-top-left lg:object-bottom-left" src={currentTuning.icon}/>
+        <Image priority width={600} height={600} alt={currentTuning.name} className="absolute h-[90vh] lg:rotate-45 left-0 object-contain object-top-left lg:object-bottom-left" src={currentTuning.icon}/>
         <div className="p-4 m-4 relative z-50 rounded-2xl shadow-2xl border border-zinc-300 w-full max-w-md" style={{
           background:"#FFFFFF50",
           backdropFilter:"blur(4px)"
         }}>
-          <div className="mb-6">
-            <label className="block font-semibold mb-2 text-zinc-900">Instrument</label>
+          <Image priority width={80} height={80} alt="Guitartuner.co.za" className="mx-auto mb-2 w-auto h-20" src="/logo.png"/>
+          <div className="mb-6 flex w-full gap-2 items-center">
+            <label className="block font-semibold">Instrument</label>
             <select
               value={tuningType}
               onChange={(e) => {
                 setTuningType(e.target.value);
                 setSelectedNote(null);
               }}
-              className="p-2 rounded w-full bg-zinc-200 text-zinc-900 border border-zinc-300 focus:ring-2 focus:ring-blue-500"
+              className="bg-white p-2 rounded w-full border border-zinc-300 focus:ring-2 focus:ring-blue-500"
             >
               {Object.entries(tunings).map(([key, value]) => (
                 <option key={key} value={key}>
@@ -73,7 +74,7 @@ const GuitarTuner: React.FC = () => {
                   className={`p-3 flex items-center justify-between text-sm font-semibold rounded-lg transition-all shadow-inner border ${
                     selectedNote?.label === note.label
                       ? "bg-blue-600 text-white border-blue-400"
-                      : "bg-zinc-300 hover:bg-zinc-400 hover:text-white text-zinc-600 border-zinc-200"
+                      : "bg-white hover:bg-blue-400 hover:text-white text-zinc-600 border-zinc-200"
                   }`}
                 >
                   <span>{note.label}</span>
@@ -89,7 +90,7 @@ const GuitarTuner: React.FC = () => {
             </div>
           )}
 
-          <div className="rounded-xl border border-zinc-300 p-4">
+          <div className="bg-white rounded-xl border border-zinc-300 p-4">
             <PitchDetector
               label={
                 autoDetect
@@ -101,8 +102,7 @@ const GuitarTuner: React.FC = () => {
               autoDetect={autoDetect}
             />
           </div>
-        </div>
-        <Image width={80} height={80} alt="Guitartuner.co.za" className="absolute top-4 right-4 w-auto h-20" src="/logo.png"/>
+        </div>        
       </main>
     </PitchProvider>
 	);
