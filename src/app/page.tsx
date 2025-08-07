@@ -57,7 +57,7 @@ const GuitarTuner: React.FC = () => {
 							</select>
 						</div>
 
-						<div className="mb-6 flex items-center gap-2 px-1"> 
+						<div className="mb-6 flex items-center gap-2 px-1 w-full lg:w-max"> 
 							<button onClick={()=>{
 								setAutoDetect(!autoDetect); 
 							}} className="font-semibold text-zinc-900 cursor-pointe flex items-center gap-2">
