@@ -12,7 +12,7 @@ const PitchDetectorComponent: React.FC<PitchDetectorProps> = ({
 }) => {
    const { currentFreq, direction, detectedNote, diff } = usePitch();
 
-  const needlePosition = Math.max(-50, Math.min(50, diff * 10)); // clamp between -50 and 50
+  const needlePosition = Math.max(-115, Math.min(115, diff * 10)); // clamp between -50 and 50
 
   const getColor = () => {
     if (direction === "Perfect") return "bg-green-500";

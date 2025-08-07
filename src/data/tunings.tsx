@@ -26,7 +26,7 @@ const tunings: Record<string, { name: string;soundType:string;icon:string; notes
     ],
   },
   halfStepDown: {
-    name: "Half Step Down Guitar",
+    name: "1/2 Down Guitar",
     icon:"/icons/electric.png",
     soundType: "guitar",
     notes: [
@@ -113,7 +113,7 @@ const tunings: Record<string, { name: string;soundType:string;icon:string; notes
   },
   baritoneUkulele: {
     name: "Baritone Ukulele",
-    icon:"/icons/ukulele.png",
+    icon:"/icons/baritone-ukulele.png",
     soundType:"ukulele",
     notes: [
       { label: "E3", frequency: 164.81 },
@@ -135,7 +135,7 @@ const tunings: Record<string, { name: string;soundType:string;icon:string; notes
   },
   viola: {
     name: "Viola",
-    icon:"/icons/violin.png",
+    icon:"/icons/viola.png",
     soundType:"violin",
     notes: [
       { label: "A4", frequency: 440.0 },
@@ -146,7 +146,7 @@ const tunings: Record<string, { name: string;soundType:string;icon:string; notes
   },
   cello: {
     name: "Cello",
-    icon:"/icons/violin.png",
+    icon:"/icons/cello.png",
     soundType:"violin",
     notes: [
       { label: "A3", frequency: 220.0 },
@@ -168,7 +168,7 @@ const tunings: Record<string, { name: string;soundType:string;icon:string; notes
   },
   banjo: {
     name: "Banjo (5-string)",
-    icon:"/icons/guitar.png",
+    icon:"/icons/banjo.png",
     soundType:"guitar",
     notes: [
       { label: "G4", frequency: 392.0 },

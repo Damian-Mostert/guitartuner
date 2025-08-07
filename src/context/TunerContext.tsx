@@ -53,7 +53,6 @@ export const TunerProvider = ({ children }: { children: ReactNode }) => {
 		}
 	};
 
-	// Hydrate state from localStorage on first load
 	useEffect(() => {
 		const storedTuning = localStorage.getItem("tuningType");
 		const storedAutoDetect = localStorage.getItem("autoDetect");
@@ -79,13 +78,12 @@ export const TunerProvider = ({ children }: { children: ReactNode }) => {
 		}
 	}, []);
 
-	// Automatically update selectedNote when tuning changes and autoDetect is off
 	useEffect(() => {
 		if (!autoDetect) {
 			const firstNote = tunings[tuningType].notes[0];
 			setSelectedNote(firstNote);
 		} else {
-			setSelectedNote(null); // If autoDetect is on, no note should be selected
+			setSelectedNote(null);
 		}
 	}, [tuningType, autoDetect]);
 
