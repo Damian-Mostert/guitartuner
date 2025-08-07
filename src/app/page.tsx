@@ -33,7 +33,7 @@ const GuitarTuner: React.FC = () => {
 		<PitchProvider autoDetect={autoDetect} targetFreq={autoDetect ? -1 : selectedNote?.frequency ?? -1} notes={currentTuning.notes}>
 			<main className="w-screen h-screen overflow-hidden flex items-end lg:items-center justify-center">
 				<Image priority width={600} height={600} alt={currentTuning.name} className="absolute h-[90vh] lg:rotate-45 left-0 object-contain object-top-left lg:object-bottom-left" src={currentTuning.icon}/>
-				<div className="p-4">
+				<div className="p-4 pb-10 pb-4">
 					<div className="p-4 relative z-50 rounded-2xl shadow-2xl border border-zinc-300 w-full max-w-md" style={{
 						background:"#FFFFFF50",
 						backdropFilter:"blur(4px)"
@@ -89,7 +89,7 @@ const GuitarTuner: React.FC = () => {
 						</div>
 					</div> 
 				</div> 
-        <div  className="absolute bottom-4 right-4 z-50">
+        <div  className="absolute top-4 right-4 z-50">
           {isOffline ? <div className="p-2 bg-blue-200 rounded-md">
               You are offline
           </div>:<>
