@@ -48,22 +48,13 @@ const GuitarTuner: React.FC = () => {
               </select>
             </div>
 
-            <div className="mb-6 flex items-center gap-2 px-1">
-              <input
-                hidden
-                id="autodetect"
-                type="checkbox"
-                checked={autoDetect}
-                onChange={() => {
-                  setAutoDetect(!autoDetect);
-                  setSelectedNote(null);
-                }}
-                className="accent-blue-500 scale-125"
-              />
-              <label htmlFor="autodetect" className="font-semibold text-zinc-900 cursor-pointe flex items-center gap-2">
+            <div className="mb-6 flex items-center gap-2 px-1">              
+              <button onClick={()=>{
+                  setAutoDetect(!autoDetect);                  
+              }}  className="font-semibold text-zinc-900 cursor-pointe flex items-center gap-2">
                 Auto Detect
                 {autoDetect?<CircleCheck/>:<Circle/>}
-              </label>
+              </button>
             </div>
 
             {!autoDetect && (
