@@ -65,7 +65,6 @@ const GuitarTuner: React.FC = () => {
 								{autoDetect?<CircleCheck/>:<Circle/>}
 							</button>
 						</div>
-
 						{!autoDetect && (
 							<StringInstrumentDisplay
                 notes={currentTuning.notes}
