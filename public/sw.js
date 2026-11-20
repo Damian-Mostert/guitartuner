@@ -3,15 +3,19 @@
 const CACHE_NAME = 'nextjs-offline-cache-v1';
 const URLS_TO_CACHE = [
 	'/',
-	'/logo.png',
-	'/icons/12-string.png',
-	'/icons/7-string.png',
-	'/icons/bass.png',
-	'/icons/double-bass.png',
-	'/icons/electric.png',
-	'/icons/guitar.png',
-	'/icons/ukulele.png',
-	'/icons/violin.png',
+	'/logo.webp',
+	'/icons/12-string.webp',
+	'/icons/7-string.webp',
+	'/icons/banjo.webp',
+	'/icons/baritone-ukulele.webp',
+	'/icons/bass.webp',
+	'/icons/cello.webp',
+	'/icons/double-bass.webp',
+	'/icons/electric.webp',
+	'/icons/guitar.webp',
+	'/icons/ukulele.webp',
+	'/icons/viola.webp',
+	'/icons/violin.webp',
 ];
 
 self.addEventListener('install', (event) => {

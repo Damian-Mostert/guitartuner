@@ -38,7 +38,7 @@ const GuitarTuner: React.FC = () => {
 						background:"#FFFFFF50",
 						backdropFilter:"blur(4px)"
 					}}>
-						<Image priority width={80} height={80} alt="Guitartuner.co.za" className="mx-auto mb-2 w-auto h-20" src="/logo.png"/>
+						<Image priority width={80} height={80} alt="Guitartuner.co.za" className="mx-auto mb-2 w-auto h-20" src="/logo.webp"/>
 						<div className="mb-6 flex w-full gap-2 items-center">
 							<label className="block font-semibold">Instrument</label>
 							<select
