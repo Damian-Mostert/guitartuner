@@ -1,8 +1,9 @@
 // public/sw.js
 
-const CACHE_NAME = 'nextjs-offline-cache-v1';
+const CACHE_NAME = 'nextjs-offline-cache-v2';
 const URLS_TO_CACHE = [
 	'/',
+	'/terms',
 	'/logo.webp',
 	'/icons/12-string.webp',
 	'/icons/7-string.webp',

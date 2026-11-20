@@ -87,6 +87,11 @@ const GuitarTuner: React.FC = () => {
 								autoDetect={autoDetect}
 							/>
 						</div>
+						<div className="mt-4 text-center">
+							<a href="/terms" className="text-sm text-zinc-600 underline hover:text-zinc-800">
+								Terms &amp; Conditions
+							</a>
+						</div>
 					</div> 
 				</div> 
         <div  className="absolute top-4 right-4 z-50">
