@@ -1,14 +1,16 @@
+import Link from "next/link";
+
 export default function TermsPage() {
   return (
     <main className="h-screen overflow-y-auto px-4 py-8 sm:py-12">
       <div className="mx-auto w-full max-w-3xl">
         <div className="rounded-2xl border border-zinc-300 bg-white/90 p-6 shadow-lg sm:p-8">
-          <a
+          <Link
             href="/"
             className="mb-6 inline-block text-sm font-medium text-zinc-600 underline hover:text-zinc-900"
           >
             Back to tuner
-          </a>
+          </Link>
 
           <h1 className="mb-2 text-3xl font-bold text-zinc-900">Terms &amp; Conditions</h1>
           <p className="mb-4 text-zinc-700">
